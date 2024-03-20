@@ -82,6 +82,7 @@ export const env = createEnv({
     UPLOADS_DIR: z.string().min(1).optional(),
     VERCEL_URL: z.string().optional(),
     WEBAPP_URL: z.string().url().optional(),
+    UNSPLASH_API_KEY: z.string().optional(),
   },
 
   /*
@@ -177,5 +178,6 @@ export const env = createEnv({
     UPLOADS_DIR: process.env.UPLOADS_DIR,
     VERCEL_URL: process.env.VERCEL_URL,
     WEBAPP_URL: process.env.WEBAPP_URL,
+    UNSPLASH_API_KEY: process.env.UNSPLASH_API_KEY,
   },
 });

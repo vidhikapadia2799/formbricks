@@ -5,6 +5,7 @@ import { TSurvey } from "@formbricks/types/surveys";
 import { AnimatedSurveyBg } from "./AnimatedSurveyBg";
 import { ColorSurveyBg } from "./ColorSurveyBg";
 import { ImageSurveyBg } from "./ImageSurveyBg";
+import { UploadSurveyBg } from "./UploadSurveyBg";
 
 interface SurveyBgSelectorTabProps {
   localSurvey: TSurvey;
@@ -12,7 +13,13 @@ interface SurveyBgSelectorTabProps {
   colours: string[];
   bgType: string | null | undefined;
 }
-
+interface Image {
+  id: string;
+  alt_description: string;
+  urls: {
+    regular: string;
+  };
+}
 const TabButton = ({ isActive, onClick, children }) => (
   <button
     type="button"
@@ -33,9 +40,12 @@ export default function SurveyBgSelectorTab({
   const background = localSurvey.styling?.background;
   const [backgrounds, setBackgrounds] = useState({
     image: background?.bgType === "image" ? background.bg : "",
+    upload: background?.bgType === "upload" ? background.bg : "",
     animation: background?.bgType === "animation" ? background.bg : "",
     color: background?.bgType === "color" ? background.bg : "",
   });
+  const [query, setQuery] = useState("");
+  const [images, setImages] = useState<Image[]>([]);
 
   useEffect(() => {
     const bgType = background?.bgType;
@@ -45,6 +55,7 @@ export default function SurveyBgSelectorTab({
       image: bgType === "image" ? background?.bg : prevBgUrl.image,
       animation: bgType === "animation" ? background?.bg : prevBgUrl.animation,
       color: bgType === "color" ? background?.bg : prevBgUrl.color,
+      upload: bgType === "upload" ? background?.bg : prevBgUrl.upload,
     }));
   }, [background?.bg, background?.bgType]);
 
@@ -57,6 +68,16 @@ export default function SurveyBgSelectorTab({
 
   const renderContent = () => {
     switch (tab) {
+      case "upload":
+        return (
+          <UploadSurveyBg
+            handleBgChange={handleBgChange}
+            query={query}
+            images={images}
+            setQuery={setQuery}
+            setImages={setImages}
+          />
+        );
       case "image":
         return (
           <ImageSurveyBg
@@ -90,6 +111,9 @@ export default function SurveyBgSelectorTab({
           Animation
         </TabButton>
         <TabButton isActive={tab === "image"} onClick={() => setTab("image")}>
+          Upload
+        </TabButton>
+        <TabButton isActive={tab === "upload"} onClick={() => setTab("upload")}>
           Image
         </TabButton>
       </div>

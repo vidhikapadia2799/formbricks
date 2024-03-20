@@ -36,6 +36,11 @@ export const MediaBackground: React.FC<MediaBackgroundProps> = ({
       const img = new Image();
       img.onload = () => setBackgroundLoaded(true);
       img.src = survey.styling?.background?.bg;
+    } else if (survey.styling?.background?.bgType === "upload" && survey.styling?.background?.bg) {
+      // For images, we create a new Image object to listen for the 'load' event
+      const img = new Image();
+      img.onload = () => setBackgroundLoaded(true);
+      img.src = survey.styling?.background?.bg;
     } else {
       // For colors or any other types, set to loaded immediately
       setBackgroundLoaded(true);
@@ -76,6 +81,13 @@ export const MediaBackground: React.FC<MediaBackgroundProps> = ({
           </video>
         );
       case "image":
+        return (
+          <div
+            className={`${baseClasses} ${loadedClass} bg-cover bg-center`}
+            style={{ backgroundImage: `url(${survey.styling?.background?.bg})`, filter: `${filterStyle}` }}
+          />
+        );
+      case "upload":
         return (
           <div
             className={`${baseClasses} ${loadedClass} bg-cover bg-center`}
