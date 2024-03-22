@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
-import { TSurvey } from "@formbricks/types/surveys";
+import { TProductStyling } from "@formbricks/types/product";
+import { TSurveyStyling } from "@formbricks/types/surveys";
 
 import { AnimatedSurveyBg } from "./AnimatedSurveyBg";
 import { ColorSurveyBg } from "./ColorSurveyBg";
@@ -8,10 +9,11 @@ import { ImageSurveyBg } from "./ImageSurveyBg";
 import { UploadSurveyBg } from "./UploadSurveyBg";
 
 interface SurveyBgSelectorTabProps {
-  localSurvey: TSurvey;
   handleBgChange: (bg: string, bgType: string) => void;
-  colours: string[];
+  colors: string[];
   bgType: string | null | undefined;
+  environmentId: string;
+  styling: TSurveyStyling | TProductStyling | null;
 }
 interface Image {
   id: string;
@@ -32,12 +34,14 @@ const TabButton = ({ isActive, onClick, children }) => (
 );
 
 export default function SurveyBgSelectorTab({
-  localSurvey,
+  styling,
   handleBgChange,
-  colours,
+  colors,
   bgType,
+  environmentId,
 }: SurveyBgSelectorTabProps) {
-  const background = localSurvey.styling?.background;
+  const { background } = styling ?? {};
+
   const [backgrounds, setBackgrounds] = useState({
     image: background?.bgType === "image" ? background.bg : "",
     upload: background?.bgType === "upload" ? background.bg : "",
@@ -61,11 +65,6 @@ export default function SurveyBgSelectorTab({
 
   const [tab, setTab] = useState(bgType || "color");
 
-  useEffect(() => {
-    handleBgChange(backgrounds[tab], tab);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tab]);
-
   const renderContent = () => {
     switch (tab) {
       case "upload":
@@ -81,7 +80,7 @@ export default function SurveyBgSelectorTab({
       case "image":
         return (
           <ImageSurveyBg
-            environmentId={localSurvey.environmentId}
+            environmentId={environmentId}
             handleBgChange={handleBgChange}
             background={backgrounds.image ?? ""}
           />
@@ -92,7 +91,7 @@ export default function SurveyBgSelectorTab({
         return (
           <ColorSurveyBg
             handleBgChange={handleBgChange}
-            colours={colours}
+            colors={colors}
             background={backgrounds.color ?? ""}
           />
         );
