@@ -1,7 +1,7 @@
 import { debounce } from "lodash";
-import { SearchIcon } from "lucide-react";
+import { Loader, SearchIcon } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Input } from "@formbricks/ui/Input";
 
@@ -29,18 +29,20 @@ export const UploadSurveyBg = ({
   setImages,
 }: UploadSurveyBgProps) => {
   const inputFocus = useRef<HTMLInputElement>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async (searchQuery: string) => {
-      const accessKey = "";
+      setLoading(true);
       try {
         const response = await fetch(
-          `https://api.unsplash.com/search/photos?query=${searchQuery}&client_id=${accessKey}&orientation=landscape&w=1920&h=1080`
+          `https://api.unsplash.com/search/photos?query=${searchQuery}&client_id=${process.env.NEXT_PUBLIC_UNSPLASH_API_KEY}&orientation=landscape&w=1920&h=1080`
         );
         const data = await response.json();
         setImages(data.results);
+        setLoading(false);
       } catch (error) {
-        console.error("Error fetching images:", error);
+        setLoading(false);
       }
     };
 
@@ -53,7 +55,7 @@ export const UploadSurveyBg = ({
     return () => {
       debouncedFetchData.cancel();
     };
-  }, [query]);
+  }, [query, setImages]);
 
   useEffect(() => {
     inputFocus.current?.focus();
@@ -75,18 +77,24 @@ export const UploadSurveyBg = ({
           ref={inputFocus}
         />
       </div>
-      <div className="mt-4 grid cursor-pointer grid-cols-3  gap-1">
-        {images.map((image) => (
-          <Image
-            key={image.id}
-            width={300}
-            height={200}
-            src={image.urls.regular}
-            alt={image.alt_description}
-            onClick={() => handleBgChange(image.urls.regular, "upload")}
-            className="rounded-lg"
-          />
-        ))}
+      <div className="relative mt-4 grid cursor-pointer  grid-cols-3 gap-1">
+        {loading ? (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Loader />
+          </div>
+        ) : (
+          images.map((image) => (
+            <Image
+              key={image.id}
+              width={300}
+              height={200}
+              src={image.urls.regular}
+              alt={image.alt_description}
+              onClick={() => handleBgChange(image.urls?.regular, "upload")}
+              className="rounded-lg"
+            />
+          ))
+        )}
       </div>
     </div>
   );

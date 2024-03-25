@@ -142,7 +142,7 @@
         "VERCEL",
         "VERCEL_URL",
         "WEBAPP_URL",
-        "UNSPLASH_API_KEY"
+        "NEXT_PUBLIC_UNSPLASH_API_KEY"
       ]
     },
     "build:dev": {

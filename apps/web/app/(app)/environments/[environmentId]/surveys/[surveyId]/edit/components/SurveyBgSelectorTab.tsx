@@ -113,9 +113,13 @@ export default function SurveyBgSelectorTab({
         <TabButton isActive={tab === "image"} onClick={() => setTab("image")}>
           Upload
         </TabButton>
-        <TabButton isActive={tab === "upload"} onClick={() => setTab("upload")}>
-          Image
-        </TabButton>
+        {process.env.NEXT_PUBLIC_UNSPLASH_API_KEY ? (
+          <TabButton isActive={tab === "upload"} onClick={() => setTab("upload")}>
+            Image
+          </TabButton>
+        ) : (
+          <></>
+        )}
       </div>
       {renderContent()}
     </div>
